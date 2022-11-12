@@ -1,8 +1,8 @@
 /*
  * File:   main.c
- * Author: Andrés Lemus 21634
- * Proyecto #2
- * Created on November 08, 2022, 7:02 AM
+ * Author: Andrés Lemus
+ * Laboratorio #5 PWM
+ * Created on October 17, 2022, 5:26 PM
  */
 
 // CONFIG1
@@ -22,118 +22,237 @@
 #pragma config WRT = OFF        // Flash Program Memory Self Write Enable bits (Write protection off)
 
 #include <xc.h>
-#define _XTAL_FREQ 1000000
-#define tmr0_val 236 //valor del timer0 para un período de 20ms
+#include <stdint.h>
 
-char selector;
-char bandera;
-int pot;
+#define _XTAL_FREQ 500000 //frecuencia de 500 kHZ
+#define tmr0_val 246 //valor del timer0 para un período de 20ms
 
-void setup(void);
-void setupPWM(void);
-void setupADC(void);
-void setupUART(void);
-void setupEEPROM(void);
+unsigned int selector = 0;
+unsigned int bandera = 0;
+unsigned int loop = 0;
+unsigned int pot; //valor para tiempo en alto de PWM para intensidad del led
+unsigned int pot1; //valor para tiempo en alto de PWM para intensidad del led
+unsigned int val0; //valor para tiempo en alto de PWM para intensidad del led
+unsigned int val1; //valor para tiempo en alto de PWM para intensidad del led
+unsigned int val2; //valor para tiempo en alto de PWM para intensidad del led
+unsigned int val3; //valor para tiempo en alto de PWM para intensidad del led
+unsigned char dato;
+
+void setup(void); //función de configuración
+void setupADC(void); //función de configuración del ADC
+void setupPWM(void); //función de configuración del PWM
+void setupUART(void); //función de UART
+unsigned char readEEPROM(void);
+void writeEEPROM(unsigned char data);
+void interrup(void);
+void cadena(char *cursor);
 void delay(unsigned int micro); //función para obtener delay variable
 unsigned int map(uint8_t value, int inputmin, int inputmax, int outmin, int outmax){ //función para mapear valores
     return ((value - inputmin)*(outmax-outmin)) / (inputmax-inputmin)+outmin;} 
 
-
 //VECTOR DE INTERRUPCIONES
 void __interrupt() isr(void){
     if (INTCONbits.RBIF == 1){
+        INTCONbits.RBIF = 0;
         if (PORTBbits.RB7 == 0){
             bandera = 1;}
-        if (PORTBbits.RB7 == 0 && bandera == 1){
-            selector++;}
-            if (selector == 4){
-                selector = 1;}
-            INTCONbits.RBIF = 0;   
+        if (PORTBbits.RB7 == 1 && bandera == 1){
+            selector++;
+            loop = 0;
+            bandera = 0;
+            if (selector == 3){
+                selector = 0;}
+        }               
     }
-
+    
     if (PIR1bits.ADIF == 1){ //verificar bandera del conversor ADC
         if (ADCON0bits.CHS == 0b0000){ 
-            CCPR1L = map(ADRESH, 1, 255, 3, 20); //mapear valores para el servomotor 1
+            CCPR1L = map(ADRESH, 0, 255, 7, 15); //mapear valores para el servomotor 1
             ADCON0bits.CHS = 0b0001;} //cambio de canal
         
         else if (ADCON0bits.CHS == 0b0001){
-            CCPR2L = map(ADRESH, 1, 255, 3, 20); //mapear valores para el servomotor 2
+            CCPR2L = map(ADRESH, 0, 255, 7, 15); //mapear valores para el servomotor 2
             ADCON0bits.CHS = 0b0010;} //cambio de canal
         
         else if (ADCON0bits.CHS == 0b0010){
-            pot = map(ADRESH, 0, 255, 0, 80); //mapear valores para intensidad del led
+            pot = map(ADRESH, 0, 255, 5, 14); //mapear valores para intensidad del led
             ADCON0bits.CHS = 0b0011;} //cambio de canal
         
         else if (ADCON0bits.CHS == 0b0011){
-            pot = map(ADRESH, 0, 255, 0, 80); //mapear valores para intensidad del led
+            pot1 = map(ADRESH, 0, 255, 5, 14); //mapear valores para intensidad del led
             ADCON0bits.CHS = 0b0000;} //cambio de canal
             PIR1bits.ADIF = 0;} //limpiar bandera}
     
     if (INTCONbits.T0IF == 1){ //chequear interrupción del Timer0
         INTCONbits.T0IF = 0; // limpiar bandera
         TMR0 = tmr0_val; //asignar valor al timer0
-        PORTAbits.RA0 = 1; //encender led
+        PORTCbits.RC0 = 1; //encender led
         delay(pot); // delay (tiempo en alto del pulso)
-        PORTAbits.RA0 = 0; //apagar
-    }
-   
+        PORTCbits.RC0 = 0; //apagar
+        PORTCbits.RC3 = 1; //encender led
+        delay(pot1); // delay (tiempo en alto del pulso)
+        PORTCbits.RC3 = 0; //apagar
+        /*if (ADCON0bits.CHS = 0b0010){
+        PORTCbits.RC0 = 1; //encender led
+        delay(pot); // delay (tiempo en alto del pulso)
+        PORTCbits.RC0 = 0; //apagar
+        }
+        else if (ADCON0bits.CHS = 0b0011){
+        PORTCbits.RC3 = 1; //encender led
+        delay(pot1); // delay (tiempo en alto del pulso)
+        PORTCbits.RC3 = 0; //apagar
+        }*/
+        
+    }  
 }
 
-void main(void) {
-    setup();
-    setupADC();
-    setupPWM();
+//LOOP PRINCIPAL
+void main(void) { 
+    setup(); //Llamar al setup
+    setupADC(); //Llamar a la configuración del ADC
+    setupPWM(); //Llamar a la configuración del PWM
+    setupUART(); //Llamar función de UART
     TMR0 = tmr0_val; //asignar valor al timer 0
-    selector = 1;
-    while(1){
-        if (selector == 1){
-            PORTDbits.RD0 = 1;
-            if (ADCON0bits.GO == 0){ //Chequear si la conversión ya termino
-            ADCON0bits.GO = 1;} // Iniciar Conversión
-        }
-        if (selector == 2){
+    cadena("\n\r-------------MENU------------------\n\r");
+    while (1){
+        if (selector == 0){
+            loop = 1;
+            while (loop == 1){
+                if (ADCON0bits.GO == 0){ //Chequear si la conversión ya termino
+                    ADCON0bits.GO = 1;}
+                PORTDbits.RD5 = 1;    
+                PORTDbits.RD6 = 0;
+                PORTDbits.RD7 = 0;
+                if (PORTBbits.RB6 == 0){
+                    bandera = 2;}
+                if (PORTBbits.RB6 == 1 && bandera == 2){
+                    EEADR = 0b00000000;
+                    writeEEPROM(CCPR1L);
+                    __delay_us(40);
+                
+                    EEADR = 0b00000001;
+                    writeEEPROM(CCPR2L);
+                    __delay_us(40);
+                   
+                    EEADR = 0b00000010;
+                    writeEEPROM(pot);
+                    __delay_us(40);
+                   
+                    EEADR = 0b00000011;
+                    writeEEPROM(pot1);
+                    __delay_us(40);
+                    
+                    bandera = 0;}
             
-        }
-    }
+            }}
+        
+        if (selector == 1){
+            interrup();
+            loop = 1;
+            while (loop == 1){
+                PORTDbits.RD5 = 0;
+                PORTDbits.RD6 = 1;
+                PORTDbits.RD7 = 0;
+            if (PORTBbits.RB6 == 0){
+                bandera = 2;}
+            if (PORTBbits.RB6 == 1 && bandera == 2){
+                EEADR = 0b00000000;
+                readEEPROM();
+                CCPR1L = dato; 
+                __delay_us(40);
+                
+                EEADR = 0b00000001;
+                readEEPROM();
+                CCPR2L = dato; 
+                __delay_us(40);
+                
+                EEADR = 0b00000010;
+                readEEPROM();
+                pot = dato; 
+                __delay_us(40);
+                
+                EEADR = 0b00000011;
+                readEEPROM();
+                pot1 = dato; 
+                __delay_us(40);
+                
+                bandera = 0;}
+            
+            }}
+        
+        if (selector == 2){
+            loop = 1;
+            while (loop == 1){
+            PORTDbits.RD5 = 0;    
+            PORTDbits.RD6 = 0;
+            PORTDbits.RD7 = 1;
+            }} 
+    }   
 }
 
 void setup(void){
-    ANSEL = 0b00000111; // puertos digitales
-    ANSELH = 0;
-    TRISBbits.TRISB2 = 1; //puerto B7 como entrada
-    TRISBbits.TRISB1 = 1; //puerto B6 como entrada
-    TRISBbits.TRISB0 = 1; //puerto B0 como entrada
-    TRISAbits.TRISA0 = 0; //puero A0 como salida
-    TRISD = 0;
-    PORTD = 0;
-    PORTB = 0; // limpiar puerto B
-    PORTA = 0; // Limpiar Puerto A
+    ANSELH = 0; // Puertos digitales
+    ANSELbits.ANS0 = 1; //puerto RA0 como analógico
+    ANSELbits.ANS1 = 1; //puerto RA1 como analógico
+    ANSELbits.ANS2 = 1; //puerto RA2 como analógico
+    ANSELbits.ANS3 = 1; //puerto RA3 como analógico
+    TRISBbits.TRISB7 = 1; //puerto B7 como entrada
+    TRISBbits.TRISB6 = 1; //puerto B6 como entrada
+    TRISBbits.TRISB5 = 1; //puerto B5 como entrada
+    TRISBbits.TRISB4 = 1; //puerto B4 como entrada
+    TRISBbits.TRISB3 = 1; //puerto B3 como entrada
+    TRISCbits.TRISC0 = 0; //puerto C0 como salida
+    TRISCbits.TRISC3 = 0; //puerto C3 como salida
+    TRISE = 0;
+    TRISD = 0; // Puerto D como salida
+    PORTA = 0; // limpiar puerto A
+    PORTB = 0; // Limpiar puerto B
+    PORTD = 0; // Limpiar puerto D
+    PORTE = 0; 
     
     INTCONbits.GIE = 1; //Activar interrupciones globales
     INTCONbits.PEIE = 1; //Activar interrupciones periféricas
-    INTCONbits.T0IE = 0; //Activar interrupciones del timer0
+    INTCONbits.RBIE = 1;
+    INTCONbits.RBIF = 0;
+    INTCONbits.T0IE = 1; //Activar interrupciones del timer0
     INTCONbits.T0IF = 0; //Limpiar bandera de interrupcion del Timer0
     PIE1bits.ADIE = 1; // Habiliar interrupcion del conversor ADC
     PIR1bits.ADIF = 0; // Limpiar bandera de interrupción del ADC
 
-    OSCCONbits.IRCF2 = 1; //Oscilador a 1MHz
-    OSCCONbits.IRCF1 = 0;
-    OSCCONbits.IRCF0 = 0;
+    OSCCONbits.IRCF2 = 0; //Oscilador a 500kHz
+    OSCCONbits.IRCF1 = 1;
+    OSCCONbits.IRCF0 = 1;
     OSCCONbits.SCS = 1; //Oscialdor interno
     
+    OPTION_REGbits.nRBPU = 0;
     OPTION_REGbits.T0CS = 0; //Usar Timer0 con Fosc/4
     OPTION_REGbits.PSA = 0; //Prescaler con el Timer0
     OPTION_REGbits.PS2 = 1; //Prescaler de 256
     OPTION_REGbits.PS1 = 1;
-    OPTION_REGbits.PS0 = 1; 
+    OPTION_REGbits.PS0 = 1;
+    
+    WPUBbits.WPUB7 = 1;
+    WPUBbits.WPUB6 = 1;
+    WPUBbits.WPUB5 = 1;
+    WPUBbits.WPUB4 = 1;
+    WPUBbits.WPUB3 = 1;
+    
+    IOCBbits.IOCB7 = 1;
+    IOCBbits.IOCB6 = 0;
+    IOCBbits.IOCB5 = 0;
+    IOCBbits.IOCB4 = 0;
+    IOCBbits.IOCB3 = 0;  
+    
+    EEADRH = 0;
 }
 
+//ADC
 void setupADC(void){
     ADCON0bits.ADCS1 = 0; // Fosc/2        
     ADCON0bits.ADCS0 = 0; // =======      
     
     ADCON1bits.VCFG1 = 0; // Referencia VSS (0 Volts)
-    ADCON1bits.VCFG0 = 0; // Referencia VDD (5 Volts)
+    ADCON1bits.VCFG0 = 0; // Referencia VDD (3.3 Volts)
     
     ADCON1bits.ADFM = 0;  // Justificado hacia izquierda
     
@@ -146,6 +265,7 @@ void setupADC(void){
     __delay_us(100); //delay de 100 us
 }
 
+//PWM
 void setupPWM(void){
     //CCP1
     TRISCbits.TRISC2 = 1; //se pone CCP1 com entrada
@@ -159,22 +279,24 @@ void setupPWM(void){
     T2CONbits.TMR2ON = 1; //Habiliar Timer2
             
    //CP2
-   //TRISCbits.TRISC1 = 1; //se pone CCP2 com entrada  
-   //CCP2CON = 0b00001100; //Modo PWM
-   //CCP2CONbits.DC2B0 = 1; //bits menos significativos para el tiempo en alto
-   //CCP2CONbits.DC2B1 = 1;
-   //CCPR2L = 11; //valor asignado para oscilar para empezar en 0
+   TRISCbits.TRISC1 = 1; //se pone CCP2 com entrada  
+   CCP2CON = 0b00001100; //Modo PWM
+   CCP2CONbits.DC2B0 = 1; //bis menos significativos para el tiempo en alto
+   CCP2CONbits.DC2B1 = 1;
+   CCPR2L = 11; //valor asignado para oscilar para empezar en 0
    
    while (PIR1bits.TMR2IF == 0); //No hacer nada hasta que haya interrupcion
     PIR1bits.TMR2IF = 0; //limpiar bandera de overflow del Tiemr2
     TRISCbits.TRISC2 = 0; //Poner C2 como salida PWM
-    //TRISCbits.TRISC1 = 0; //Poncer C1 como salida PWM
+    TRISCbits.TRISC1 = 0; //Poncer C1 como salida PWM
 }
 
 void setupUART(void){
     // Paso 1: configurar velocidad baud rate
-    
-    SPBRG = 2; //valor para 9600 de baud rate
+    BAUDCTLbits.BRG16 = 1;
+    TXSTAbits.BRGH = 1;
+    SPBRGH = 0;
+    SPBRG = 12; //valor para 9600 de baud rate
     
     // Paso 2:
     
@@ -190,14 +312,46 @@ void setupUART(void){
     RCSTAbits.CREN = 1;         // Habilitamos la recepcion
 }
 
-void setupEEPROM(void){
+unsigned char readEEPROM(void){
+    EECON1bits.EEPGD = 0;
+    EECON1bits.RD = 1;
+    dato = EEDATA;
+    return dato;
+}
+
+void writeEEPROM(unsigned char data){
+    EEDATA = data;
+    EECON1bits.EEPGD = 0;
+    EECON1bits.WREN = 1;
+                
+    INTCONbits.GIE = 0;
+    while (INTCONbits.GIE == 1);
+    __delay_us(50);
+    EECON2 = 0x55;
+    EECON2 = 0xAA;
+    EECON1bits.WR = 1;
+    interrup();
+    __delay_us(50);
     
+    while (EECON1bits.WR == 1);
+    EECON1bits.WREN = 0;
+}
+
+void interrup(void){
+    INTCONbits.GIE = 1; //Activar interrupciones globales
+    INTCONbits.PEIE = 1; //Activar interrupciones periféricas
+    INTCONbits.RBIE = 1;
+    INTCONbits.RBIF = 0;
+    INTCONbits.T0IE = 1; //Activar interrupciones del timer0
+    INTCONbits.T0IF = 0; //Limpiar bandera de interrupcion del Timer0
+    PIE1bits.ADIE = 1; // Habiliar interrupcion del conversor ADC
+    PIR1bits.ADIF = 0; // Limpiar bandera de interrupción del ADC
 }
 
 //FUNCION DE DELAY VARIABLES
 void delay(unsigned int micro){
     while (micro > 0){
-        __delay_us(980); //delay de 0.25ms
+        __delay_us(50); //delay de 0.25ms
         micro--; //decrementar variable
     }
 }
@@ -210,4 +364,3 @@ void cadena(char *cursor){
             *cursor++;//aumentar posicion del cursor
     }
 }
-
