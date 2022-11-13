@@ -27,16 +27,15 @@
 #define _XTAL_FREQ 500000 //frecuencia de 500 kHZ
 #define tmr0_val 246 //valor del timer0 para un período de 20ms
 
+unsigned char x=0;
+unsigned char y=0;
 unsigned int selector = 0;
 unsigned int bandera = 0;
 unsigned int loop = 0;
 unsigned int pot; //valor para tiempo en alto de PWM para intensidad del led
 unsigned int pot1; //valor para tiempo en alto de PWM para intensidad del led
-unsigned int val0; //valor para tiempo en alto de PWM para intensidad del led
-unsigned int val1; //valor para tiempo en alto de PWM para intensidad del led
-unsigned int val2; //valor para tiempo en alto de PWM para intensidad del led
-unsigned int val3; //valor para tiempo en alto de PWM para intensidad del led
 unsigned char dato;
+unsigned char servo[9] = {7,8,9,10,11,12,13,14,15};
 
 void setup(void); //función de configuración
 void setupADC(void); //función de configuración del ADC
@@ -103,7 +102,38 @@ void __interrupt() isr(void){
         PORTCbits.RC3 = 0; //apagar
         }*/
         
-    }  
+    }
+    
+    if (PIR1bits.RCIF == 1){
+        if (RCREG == 'd'){
+            if (x == 9){
+                x = 8;}
+            CCPR1L = servo[x];
+            x++;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'a'){
+            if (x == 255){
+                x = 0;}
+            CCPR1L = servo[x];
+            x--;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'w'){
+            if (y == 9){
+                y = 8;}
+            CCPR1L = servo[y];
+            y++;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 's'){
+            if (y == 255){
+                y = 0;}
+            CCPR1L = servo[y];
+            y--;
+            PIR1bits.RCIF = 0;
+        }
+    }
 }
 
 //LOOP PRINCIPAL
@@ -113,7 +143,7 @@ void main(void) {
     setupPWM(); //Llamar a la configuración del PWM
     setupUART(); //Llamar función de UART
     TMR0 = tmr0_val; //asignar valor al timer 0
-    cadena("\n\r-------------MENU------------------\n\r");
+    cadena("\n\r---------------------------------PARA CONTROLAR CON LA COMPUTADORA ELEGIR EL MODO 3---------------------------------\n\r");
     while (1){
         if (selector == 0){
             loop = 1;
@@ -139,6 +169,27 @@ void main(void) {
                     __delay_us(40);
                    
                     EEADR = 0b00000011;
+                    writeEEPROM(pot1);
+                    __delay_us(40);
+                    
+                    bandera = 0;}
+                
+                if (PORTBbits.RB5 == 0){
+                    bandera = 3;}
+                if (PORTBbits.RB5 == 1 && bandera == 3){
+                    EEADR = 0b00000100;
+                    writeEEPROM(CCPR1L);
+                    __delay_us(40);
+                
+                    EEADR = 0b00000101;
+                    writeEEPROM(CCPR2L);
+                    __delay_us(40);
+                   
+                    EEADR = 0b00000110;
+                    writeEEPROM(pot);
+                    __delay_us(40);
+                   
+                    EEADR = 0b00000111;
                     writeEEPROM(pot1);
                     __delay_us(40);
                     
@@ -177,12 +228,38 @@ void main(void) {
                 __delay_us(40);
                 
                 bandera = 0;}
+                
+            if (PORTBbits.RB5 == 0){
+            bandera = 3;}
+            if (PORTBbits.RB5 == 1 && bandera == 3){
+                EEADR = 0b00000100;
+                readEEPROM();
+                CCPR1L = dato; 
+                __delay_us(40);
+                
+                EEADR = 0b00000101;
+                readEEPROM();
+                CCPR2L = dato; 
+                __delay_us(40);
+                
+                EEADR = 0b00000110;
+                readEEPROM();
+                pot = dato; 
+                __delay_us(40);
+                
+                EEADR = 0b00000111;
+                readEEPROM();
+                pot1 = dato; 
+                __delay_us(40);
+                
+                bandera = 0;}
             
             }}
         
         if (selector == 2){
             loop = 1;
             while (loop == 1){
+            PIE1bits.RCIE =  1;    
             PORTDbits.RD5 = 0;    
             PORTDbits.RD6 = 0;
             PORTDbits.RD7 = 1;
@@ -218,6 +295,7 @@ void setup(void){
     INTCONbits.T0IF = 0; //Limpiar bandera de interrupcion del Timer0
     PIE1bits.ADIE = 1; // Habiliar interrupcion del conversor ADC
     PIR1bits.ADIF = 0; // Limpiar bandera de interrupción del ADC
+    PIE1bits.RCIE =  0;
 
     OSCCONbits.IRCF2 = 0; //Oscilador a 500kHz
     OSCCONbits.IRCF1 = 1;

@@ -2657,16 +2657,15 @@ extern __bank0 __bit __timeout;
 
 
 
+unsigned char x=0;
+unsigned char y=0;
 unsigned int selector = 0;
 unsigned int bandera = 0;
 unsigned int loop = 0;
 unsigned int pot;
 unsigned int pot1;
-unsigned int val0;
-unsigned int val1;
-unsigned int val2;
-unsigned int val3;
 unsigned char dato;
+unsigned char servo[9] = {7,8,9,10,11,12,13,14,15};
 
 void setup(void);
 void setupADC(void);
@@ -2722,7 +2721,38 @@ void __attribute__((picinterrupt(("")))) isr(void){
         PORTCbits.RC3 = 1;
         delay(pot1);
         PORTCbits.RC3 = 0;
-# 106 "main.c"
+# 105 "main.c"
+    }
+
+    if (PIR1bits.RCIF == 1){
+        if (RCREG == 'd'){
+            if (x == 9){
+                x = 8;}
+            CCPR1L = servo[x];
+            x++;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'a'){
+            if (x == 255){
+                x = 0;}
+            CCPR1L = servo[x];
+            x--;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'w'){
+            if (y == 9){
+                y = 8;}
+            CCPR1L = servo[y];
+            y++;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 's'){
+            if (y == 255){
+                y = 0;}
+            CCPR1L = servo[y];
+            y--;
+            PIR1bits.RCIF = 0;
+        }
     }
 }
 
@@ -2733,7 +2763,7 @@ void main(void) {
     setupPWM();
     setupUART();
     TMR0 = 246;
-    cadena("\n\r-------------MENU------------------\n\r");
+    cadena("\n\r---------------------------------PARA CONTROLAR CON LA COMPUTADORA ELEGIR EL MODO 3---------------------------------\n\r");
     while (1){
         if (selector == 0){
             loop = 1;
@@ -2759,6 +2789,27 @@ void main(void) {
                     _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     EEADR = 0b00000011;
+                    writeEEPROM(pot1);
+                    _delay((unsigned long)((40)*(500000/4000000.0)));
+
+                    bandera = 0;}
+
+                if (PORTBbits.RB5 == 0){
+                    bandera = 3;}
+                if (PORTBbits.RB5 == 1 && bandera == 3){
+                    EEADR = 0b00000100;
+                    writeEEPROM(CCPR1L);
+                    _delay((unsigned long)((40)*(500000/4000000.0)));
+
+                    EEADR = 0b00000101;
+                    writeEEPROM(CCPR2L);
+                    _delay((unsigned long)((40)*(500000/4000000.0)));
+
+                    EEADR = 0b00000110;
+                    writeEEPROM(pot);
+                    _delay((unsigned long)((40)*(500000/4000000.0)));
+
+                    EEADR = 0b00000111;
                     writeEEPROM(pot1);
                     _delay((unsigned long)((40)*(500000/4000000.0)));
 
@@ -2798,11 +2849,37 @@ void main(void) {
 
                 bandera = 0;}
 
+            if (PORTBbits.RB5 == 0){
+            bandera = 3;}
+            if (PORTBbits.RB5 == 1 && bandera == 3){
+                EEADR = 0b00000100;
+                readEEPROM();
+                CCPR1L = dato;
+                _delay((unsigned long)((40)*(500000/4000000.0)));
+
+                EEADR = 0b00000101;
+                readEEPROM();
+                CCPR2L = dato;
+                _delay((unsigned long)((40)*(500000/4000000.0)));
+
+                EEADR = 0b00000110;
+                readEEPROM();
+                pot = dato;
+                _delay((unsigned long)((40)*(500000/4000000.0)));
+
+                EEADR = 0b00000111;
+                readEEPROM();
+                pot1 = dato;
+                _delay((unsigned long)((40)*(500000/4000000.0)));
+
+                bandera = 0;}
+
             }}
 
         if (selector == 2){
             loop = 1;
             while (loop == 1){
+            PIE1bits.RCIE = 1;
             PORTDbits.RD5 = 0;
             PORTDbits.RD6 = 0;
             PORTDbits.RD7 = 1;
@@ -2838,6 +2915,7 @@ void setup(void){
     INTCONbits.T0IF = 0;
     PIE1bits.ADIE = 1;
     PIR1bits.ADIF = 0;
+    PIE1bits.RCIE = 0;
 
     OSCCONbits.IRCF2 = 0;
     OSCCONbits.IRCF1 = 1;
