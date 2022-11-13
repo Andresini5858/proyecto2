@@ -91,16 +91,6 @@ void __interrupt() isr(void){
         PORTCbits.RC3 = 1; //encender led
         delay(pot1); // delay (tiempo en alto del pulso)
         PORTCbits.RC3 = 0; //apagar
-        /*if (ADCON0bits.CHS = 0b0010){
-        PORTCbits.RC0 = 1; //encender led
-        delay(pot); // delay (tiempo en alto del pulso)
-        PORTCbits.RC0 = 0; //apagar
-        }
-        else if (ADCON0bits.CHS = 0b0011){
-        PORTCbits.RC3 = 1; //encender led
-        delay(pot1); // delay (tiempo en alto del pulso)
-        PORTCbits.RC3 = 0; //apagar
-        }*/
         
     }
     
@@ -122,14 +112,14 @@ void __interrupt() isr(void){
         if (RCREG == 'w'){
             if (y == 9){
                 y = 8;}
-            CCPR1L = servo[y];
+            CCPR2L = servo[y];
             y++;
             PIR1bits.RCIF = 0;
         }
         if (RCREG == 's'){
             if (y == 255){
                 y = 0;}
-            CCPR1L = servo[y];
+            CCPR2L = servo[y];
             y--;
             PIR1bits.RCIF = 0;
         }
