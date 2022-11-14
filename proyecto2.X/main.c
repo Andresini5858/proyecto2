@@ -2,7 +2,7 @@
  * File:   main.c
  * Author: Andrés Lemus
  * Laboratorio #5 PWM
- * Created on October 17, 2022, 5:26 PM
+ * Created on November 9, 2022, 7:02 AM
  */
 
 // CONFIG1
@@ -29,13 +29,16 @@
 
 unsigned char x=0;
 unsigned char y=0;
+unsigned char x1=0;
+unsigned char y1=0;
 unsigned int selector = 0;
 unsigned int bandera = 0;
 unsigned int loop = 0;
 unsigned int pot; //valor para tiempo en alto de PWM para intensidad del led
 unsigned int pot1; //valor para tiempo en alto de PWM para intensidad del led
 unsigned char dato;
-unsigned char servo[9] = {7,8,9,10,11,12,13,14,15};
+unsigned char servo[18] = {3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+unsigned char servo2[17] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
 
 void setup(void); //función de configuración
 void setupADC(void); //función de configuración del ADC
@@ -66,19 +69,19 @@ void __interrupt() isr(void){
     
     if (PIR1bits.ADIF == 1){ //verificar bandera del conversor ADC
         if (ADCON0bits.CHS == 0b0000){ 
-            CCPR1L = map(ADRESH, 0, 255, 7, 15); //mapear valores para el servomotor 1
+            CCPR1L = map(ADRESH, 0, 255, 3, 20); //mapear valores para el servomotor 1
             ADCON0bits.CHS = 0b0001;} //cambio de canal
         
         else if (ADCON0bits.CHS == 0b0001){
-            CCPR2L = map(ADRESH, 0, 255, 7, 15); //mapear valores para el servomotor 2
+            CCPR2L = map(ADRESH, 0, 255, 3, 20); //mapear valores para el servomotor 2
             ADCON0bits.CHS = 0b0010;} //cambio de canal
         
         else if (ADCON0bits.CHS == 0b0010){
-            pot = map(ADRESH, 0, 255, 5, 14); //mapear valores para intensidad del led
+            pot = map(ADRESH, 0, 255, 1, 17); //mapear valores para intensidad del led
             ADCON0bits.CHS = 0b0011;} //cambio de canal
         
         else if (ADCON0bits.CHS == 0b0011){
-            pot1 = map(ADRESH, 0, 255, 5, 14); //mapear valores para intensidad del led
+            pot1 = map(ADRESH, 0, 255, 1, 17); //mapear valores para intensidad del led
             ADCON0bits.CHS = 0b0000;} //cambio de canal
             PIR1bits.ADIF = 0;} //limpiar bandera}
     
@@ -95,9 +98,26 @@ void __interrupt() isr(void){
     }
     
     if (PIR1bits.RCIF == 1){
+        if (RCREG == '1'){
+            selector = 0;
+            loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '2'){
+            selector = 1;
+            loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '3'){
+            selector = 2;
+            loop = 0;
+            PIR1bits.RCIF = 0;
+        }
         if (RCREG == 'd'){
-            if (x == 9){
-                x = 8;}
+            if (x == 255){
+                x = 0;}
+            if (x == 17){
+                x = 16;}
             CCPR1L = servo[x];
             x++;
             PIR1bits.RCIF = 0;
@@ -110,8 +130,10 @@ void __interrupt() isr(void){
             PIR1bits.RCIF = 0;
         }
         if (RCREG == 'w'){
-            if (y == 9){
-                y = 8;}
+            if (y == 255){
+                y = 0;}
+            if (y == 17){
+                y = 16;}
             CCPR2L = servo[y];
             y++;
             PIR1bits.RCIF = 0;
@@ -123,6 +145,40 @@ void __interrupt() isr(void){
             y--;
             PIR1bits.RCIF = 0;
         }
+        
+        if (RCREG == 'i'){
+            if (x1 == 255){
+                x1 = 0;}
+            if (x1 == 16){
+                x1 = 15;}
+            pot = servo2[x1];
+            x1++;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'k'){
+            if (x1 == 255){
+                x1 = 0;}
+            pot = servo2[x1];
+            x1--;
+            PIR1bits.RCIF = 0;
+        }
+        
+        if (RCREG == 'l'){
+            if (y1 == 255){
+                y1 = 0;}
+            if (y1 == 16){
+                y1 = 15;}
+            pot1 = servo2[y1];
+            y1++;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'j'){
+            if (y1 == 255){
+                y1 = 0;}
+            pot1 = servo2[y1];
+            y1--;
+            PIR1bits.RCIF = 0;
+        }    
     }
 }
 
