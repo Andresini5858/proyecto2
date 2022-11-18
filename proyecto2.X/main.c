@@ -34,7 +34,6 @@ unsigned char x=0; //variable para posicion del servo1
 unsigned char y=0; //variable para posicion del servo2
 unsigned char x1=0; //variable para posicion del servo3
 unsigned char y1=0; //variable para posicion del servo4
-unsigned char z=0; //variable para selector del servo
 unsigned int selector = 0; //variable para selector de modo
 unsigned int bandera = 0; //variable para bandera de pushbuttons
 unsigned int loop = 0; //variable para mantener loop
@@ -100,79 +99,6 @@ void __interrupt() isr(void){
     }
     
     if (PIR1bits.RCIF == 1){
-        if (RCREG == '3'){ //revisar si se recibio un 3
-            CCPR1L = 3; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == '4'){ //revisar si se recibio un 4
-            CCPR1L = 4; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == '5'){ //revisar si se recibio un 5
-            CCPR1L = 5; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == '6'){ //revisar si se recibio un 6
-            CCPR1L = 6; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == '7'){ //revisar si se recibio un 7
-            CCPR1L = 7; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == '8'){ //revisar si se recibio un 8
-            CCPR1L = 8; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == '9'){ //revisar si se recibio un 9
-            CCPR1L = 9; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'A'){ //revisar si se recibio un A
-            CCPR1L = 10; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'B'){ //revisar si se recibio un B
-            CCPR1L = 11; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'C'){ //revisar si se recibio un C
-            CCPR1L = 12; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'D'){ //revisar si se recibio un D
-            CCPR1L = 13; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'E'){ //revisar si se recibio un E
-            CCPR1L = 14; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        } 
-        if (RCREG == 'F'){ //revisar si se recibio un F
-            CCPR1L = 15; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'G'){ //revisar si se recibio un G
-            CCPR1L = 16; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'H'){ //revisar si se recibio un H
-            CCPR1L = 17; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'J'){ //revisar si se recibio un J
-            CCPR1L = 18; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'K'){ //revisar si se recibio un K
-            CCPR1L = 19; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        if (RCREG == 'L'){ //revisar si se recibio un L
-            CCPR1L = 20; //mandar valor al motor deseado
-            PIR1bits.RCIF = 0; //limpiar bandera
-        }
-        
         if (RCREG == 'z'){ //revisar si se recibio una z
             selector = 0; //elegir modo 0
             loop = 0; //sacar del loop
