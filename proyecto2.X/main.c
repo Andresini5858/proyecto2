@@ -49,24 +49,23 @@ void setupADC(void); //función de configuración del ADC
 void setupPWM(void); //función de configuración del PWM
 void setupUART(void); //función de UART
 unsigned char readEEPROM(void); //funcio de leer de la EEPROM
-void writeEEPROM(unsigned char data); //funcion 
-void interrup(void);
-void cadena(char *cursor);
+void writeEEPROM(unsigned char data); //funcion para escribir de la EEPROM
+void cadena(char *cursor); //funcion para escribir texto a la terminal
 void delay(unsigned int micro); //función para obtener delay variable
 unsigned int map(uint8_t value, int inputmin, int inputmax, int outmin, int outmax){ //función para mapear valores
     return ((value - inputmin)*(outmax-outmin)) / (inputmax-inputmin)+outmin;} 
 
 //VECTOR DE INTERRUPCIONES
-void __interrupt() isr(void){
-    if (INTCONbits.RBIF == 1){
-        INTCONbits.RBIF = 0;
-        if (PORTBbits.RB7 == 0){
-            bandera = 1;}
-        if (PORTBbits.RB7 == 1 && bandera == 1){
-            selector++;
-            loop = 0;
-            bandera = 0;
-            if (selector == 3){
+void __interrupt() isr(void){ 
+    if (INTCONbits.RBIF == 1){ // Chequear interrupcion del Receptor 
+        INTCONbits.RBIF = 0; //Limpiar bandera
+        if (PORTBbits.RB7 == 0){ //Verificar si se presiono el boton RB7 
+            bandera = 1;} //poner bandera en 1
+        if (PORTBbits.RB7 == 1 && bandera == 1){ //chequear si se dejo de presionar el boton
+            selector++; //aumentar selector
+            loop = 0; //salir del loop para reiniciar
+            bandera = 0; //limpiar bandera
+            if (selector == 3){ // si el selector es 3, regresarlo a 0
                 selector = 0;}
         }               
     }
@@ -81,219 +80,180 @@ void __interrupt() isr(void){
             ADCON0bits.CHS = 0b0010;} //cambio de canal
         
         else if (ADCON0bits.CHS == 0b0010){
-            pot = map(ADRESH, 0, 255, 1, 17); //mapear valores para intensidad del led
+            pot = map(ADRESH, 0, 255, 1, 17); //mapear valores para servomotor 3
             ADCON0bits.CHS = 0b0011;} //cambio de canal
         
         else if (ADCON0bits.CHS == 0b0011){
-            pot1 = map(ADRESH, 0, 255, 1, 17); //mapear valores para intensidad del led
+            pot1 = map(ADRESH, 0, 255, 1, 17); //mapear valores para servomotor 4
             ADCON0bits.CHS = 0b0000;} //cambio de canal
             PIR1bits.ADIF = 0;} //limpiar bandera}
     
     if (INTCONbits.T0IF == 1){ //chequear interrupción del Timer0
         INTCONbits.T0IF = 0; // limpiar bandera
         TMR0 = tmr0_val; //asignar valor al timer0
-        PORTCbits.RC0 = 1; //encender led
+        PORTCbits.RC0 = 1; //encender puerto
         delay(pot); // delay (tiempo en alto del pulso)
         PORTCbits.RC0 = 0; //apagar
-        PORTCbits.RC3 = 1; //encender led
+        PORTCbits.RC3 = 1; //encender puerto
         delay(pot1); // delay (tiempo en alto del pulso)
-        PORTCbits.RC3 = 0; //apagar
-        
+        PORTCbits.RC3 = 0; //apagar    
     }
     
     if (PIR1bits.RCIF == 1){
-        if (RCREG == '3'){
-            CCPR1L = 3;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == '3'){ //revisar si se recibio un 3
+            CCPR1L = 3; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == '4'){
-            CCPR1L = 4;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == '4'){ //revisar si se recibio un 4
+            CCPR1L = 4; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == '5'){
-            CCPR1L = 5;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == '5'){ //revisar si se recibio un 5
+            CCPR1L = 5; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == '6'){
-            CCPR1L = 6;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == '6'){ //revisar si se recibio un 6
+            CCPR1L = 6; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == '7'){
-            CCPR1L = 7;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == '7'){ //revisar si se recibio un 7
+            CCPR1L = 7; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == '8'){
-            CCPR1L = 8;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == '8'){ //revisar si se recibio un 8
+            CCPR1L = 8; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == '9'){
-            CCPR1L = 9;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == '9'){ //revisar si se recibio un 9
+            CCPR1L = 9; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == 'A'){
-            CCPR1L = 10;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'A'){ //revisar si se recibio un A
+            CCPR1L = 10; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == 'B'){
-            CCPR1L = 11;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'B'){ //revisar si se recibio un B
+            CCPR1L = 11; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == 'C'){
-            CCPR1L = 12;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'C'){ //revisar si se recibio un C
+            CCPR1L = 12; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == 'D'){
-            CCPR1L = 13;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'D'){ //revisar si se recibio un D
+            CCPR1L = 13; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == 'E'){
-            CCPR1L = 14;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'E'){ //revisar si se recibio un E
+            CCPR1L = 14; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
+        } 
+        if (RCREG == 'F'){ //revisar si se recibio un F
+            CCPR1L = 15; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == 'F'){
-            CCPR1L = 15;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'G'){ //revisar si se recibio un G
+            CCPR1L = 16; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == 'G'){
-            CCPR1L = 16;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'H'){ //revisar si se recibio un H
+            CCPR1L = 17; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 'J'){ //revisar si se recibio un J
+            CCPR1L = 18; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 'K'){ //revisar si se recibio un K
+            CCPR1L = 19; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 'L'){ //revisar si se recibio un L
+            CCPR1L = 20; //mandar valor al motor deseado
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
         
-        if (RCREG == 'H'){
-            CCPR1L = 17;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'z'){ //revisar si se recibio una z
+            selector = 0; //elegir modo 0
+            loop = 0; //sacar del loop
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 'x'){ //revisar si se recibio un x
+            selector = 1; //elegir modo 1
+            loop = 0; //sacar del loop
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 'c'){ ////revisar si se recibio un c
+            selector = 2; //elegir modo 2
+            loop = 0; //sacar del loop
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 'd'){ //revisar si se recibio un d
+            if (x == 255){ //si la posicion del servo es 255 
+                x = 0;} //igual a cero
+            if (x == 17){ //si llego al máximo regresar uno
+                x = 16;} //dejar en el máximo
+            CCPR1L = servo[x]; //mandar posicion
+            x++; //aumentar la posicion
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 'a'){ //revisar si se recibio un a
+            if (x == 255){ //si la posicion del servo es 255 
+                x = 0;} //igual a cero
+            CCPR1L = servo[x]; //mandar posicion
+            x--; //decrementar la posicion
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 'w'){ //revisar si se recibio un w
+            if (y == 255){ //si la posicion del servo es 255 
+                y = 0;} //igual a cero
+            if (y == 17){ //si llego al máximo regresar uno
+                y = 16;} //dejar en el máximo
+            CCPR2L = servo[y]; //mandar posicion al servo
+            y++; //aumentar la posicion
+            PIR1bits.RCIF = 0; //limpiar bandera
+        }
+        if (RCREG == 's'){ //revisar si se recibio un s
+            if (y == 255){ //si la posicion del servo es 255 
+                y = 0;} //igual a cero
+            CCPR2L = servo[y]; //mandar posicion al servo
+            y--; //decrementar la posicion
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
         
-        if (RCREG == 'J'){
-            CCPR1L = 18;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'i'){ //revisar si se recibio un i
+            if (x1 == 255){  //si la posicion del servo es 255 
+                x1 = 0;} //igual a cero
+            if (x1 == 16){ //si llego al máximo regresar uno
+                x1 = 15;} //dejar en el máximo
+            pot = servo2[x1]; //mandar posicion al servo
+            x1++; //aumentar la posicion
+            PIR1bits.RCIF = 0; //limpiar
         }
-        if (RCREG == 'K'){
-            CCPR1L = 19;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
-        }
-        if (RCREG == 'L'){
-            CCPR1L = 20;
-            //CCPR1L = valor;
-            //loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'k'){ //revisar si se recibio un k
+            if (x1 == 255){ //si la posicion del servo es 255 
+                x1 = 0;} //igual a cero
+            pot = servo2[x1]; //mandar posicion al servo
+            x1--; //decrementar la posicion
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
         
-        if (RCREG == 'z'){
-            selector = 0;
-            loop = 0;
-            PIR1bits.RCIF = 0;
+        if (RCREG == 'l'){ //revisar si se recibio un l
+            if (y1 == 255){ //si la posicion del servo es 255
+                y1 = 0;} //igual a cero
+            if (y1 == 16){ //si llego al máximo regresar uno
+                y1 = 15;} //dejar en el máximo
+            pot1 = servo2[y1];  //mandar posicion al servo
+            y1++; //aumentar la posicion
+            PIR1bits.RCIF = 0; //limpiar bandera
         }
-        if (RCREG == 'x'){
-            selector = 1;
-            loop = 0;
-            PIR1bits.RCIF = 0;
-        }
-        if (RCREG == 'c'){
-            selector = 2;
-            loop = 0;
-            PIR1bits.RCIF = 0;
-        }
-        if (RCREG == 'd'){
-            if (x == 255){
-                x = 0;}
-            if (x == 17){
-                x = 16;}
-            CCPR1L = servo[x];
-            x++;
-            PIR1bits.RCIF = 0;
-        }
-        if (RCREG == 'a'){
-            if (x == 255){
-                x = 0;}
-            CCPR1L = servo[x];
-            x--;
-            PIR1bits.RCIF = 0;
-        }
-        if (RCREG == 'w'){
-            if (y == 255){
-                y = 0;}
-            if (y == 17){
-                y = 16;}
-            CCPR2L = servo[y];
-            y++;
-            PIR1bits.RCIF = 0;
-        }
-        if (RCREG == 's'){
-            if (y == 255){
-                y = 0;}
-            CCPR2L = servo[y];
-            y--;
-            PIR1bits.RCIF = 0;
-        }
-        
-        if (RCREG == 'i'){
-            if (x1 == 255){
-                x1 = 0;}
-            if (x1 == 16){
-                x1 = 15;}
-            pot = servo2[x1];
-            x1++;
-            PIR1bits.RCIF = 0;
-        }
-        if (RCREG == 'k'){
-            if (x1 == 255){
-                x1 = 0;}
-            pot = servo2[x1];
-            x1--;
-            PIR1bits.RCIF = 0;
-        }
-        
-        if (RCREG == 'l'){
-            if (y1 == 255){
-                y1 = 0;}
-            if (y1 == 16){
-                y1 = 15;}
-            pot1 = servo2[y1];
-            y1++;
-            PIR1bits.RCIF = 0;
-        }
-        if (RCREG == 'j'){
-            if (y1 == 255){
-                y1 = 0;}
-            pot1 = servo2[y1];
-            y1--;
-            PIR1bits.RCIF = 0;
-        }
+        if (RCREG == 'j'){ //revisar si se recibio un j
+            if (y1 == 255){ //si la posicion del servo es 255
+                y1 = 0;} //igual a cero
+            pot1 = servo2[y1]; //mandar posicion al servo
+            y1--; //decrementar la posicion
+            PIR1bits.RCIF = 0; //limpiar bandera
+        } 
         
         
     }}
@@ -306,166 +266,166 @@ void main(void) {
     setupUART(); //Llamar función de UART
     TMR0 = tmr0_val; //asignar valor al timer 0
     cadena("\n\r---------------------------------PARA CONTROLAR CON LA COMPUTADORA ELEGIR EL MODO 3---------------------------------\n\r");
-    while (1){
-        if (selector == 0){
-            loop = 1;
-            while (loop == 1){
+    while (1){ //LOOP PRINCIPAL
+        if (selector == 0){ //Iniciar en modo 1
+            loop = 1; //dejar en loop modo 1
+            PORTDbits.RD5 = 1; //encender led indicador
+            PORTDbits.RD6 = 0; //apagar led
+            PORTDbits.RD7 = 0; //apagar led
+            while (loop == 1){ 
                 if (ADCON0bits.GO == 0){ //Chequear si la conversión ya termino
-                    ADCON0bits.GO = 1;}
-                PORTDbits.RD5 = 1;    
-                PORTDbits.RD6 = 0;
-                PORTDbits.RD7 = 0;
-                if (PORTBbits.RB6 == 0){
-                    bandera = 2;}
-                if (PORTBbits.RB6 == 1 && bandera == 2){
-                    EEADR = 0b00000000;
-                    writeEEPROM(CCPR1L);
+                    ADCON0bits.GO = 1;} //iniciar conversion
+                if (PORTBbits.RB6 == 0){ //revisar si se presiono RB6
+                    bandera = 2;} //poner bandera 
+                if (PORTBbits.RB6 == 1 && bandera == 2){ //revisar si se dejo de presionar 
+                    EEADR = 0b00000000; //indicar direccion en data memory
+                    writeEEPROM(CCPR1L); // funcion de escribir en la EEPROM
                 
-                    EEADR = 0b00000001;
-                    writeEEPROM(CCPR2L);
+                    EEADR = 0b00000001; //indicar direccion en data memory
+                    writeEEPROM(CCPR2L); // funcion de escribir en la EEPROM
                    
-                    EEADR = 0b00000010;
-                    writeEEPROM(pot);
+                    EEADR = 0b00000010; //indicar direccion en data memory
+                    writeEEPROM(pot); // funcion de escribir en la EEPROM
                    
-                    EEADR = 0b00000011;
-                    writeEEPROM(pot1);
+                    EEADR = 0b00000011; //indicar direccion en data memory
+                    writeEEPROM(pot1); // funcion de escribir en la EEPROM
                     
-                    bandera = 0;}
+                    bandera = 0;} //limpiar bandera
                 
-                if (PORTBbits.RB5 == 0){
-                    bandera = 3;}
-                if (PORTBbits.RB5 == 1 && bandera == 3){
-                    EEADR = 0b00000100;
-                    writeEEPROM(CCPR1L);
+                if (PORTBbits.RB5 == 0){ //revisar si se presiono el boton RB5 
+                    bandera = 3;} //encender bandera
+                if (PORTBbits.RB5 == 1 && bandera == 3){ //revisar si se dejo de presionar
+                    EEADR = 0b00000100; //indicar direccion en data memory
+                    writeEEPROM(CCPR1L); // funcion de escribir en la EEPROM
                 
-                    EEADR = 0b00000101;
-                    writeEEPROM(CCPR2L);
+                    EEADR = 0b00000101; //indicar direccion en data memory
+                    writeEEPROM(CCPR2L); // funcion de escribir en la EEPROM
                    
-                    EEADR = 0b00000110;
-                    writeEEPROM(pot);
+                    EEADR = 0b00000110; //indicar direccion en data memory
+                    writeEEPROM(pot); // funcion de escribir en la EEPROM
                    
-                    EEADR = 0b00000111;
-                    writeEEPROM(pot1);
+                    EEADR = 0b00000111; //indicar direccion en data memory
+                    writeEEPROM(pot1); // funcion de escribir en la EEPROM
                     
-                    bandera = 0;}
+                    bandera = 0;} //limpiar bandera
                 
-                if (PORTBbits.RB4 == 0){
-                    bandera = 4;}
-                if (PORTBbits.RB4 == 1 && bandera == 4){
-                    EEADR = 0b00001000;
-                    writeEEPROM(CCPR1L);
+                if (PORTBbits.RB4 == 0){ //revisar si se presiono boton RB4
+                    bandera = 4;} //encender bandera
+                if (PORTBbits.RB4 == 1 && bandera == 4){ //revisar si se dejo de presionar el boton
+                    EEADR = 0b00001000; //indicar direccion en data memory
+                    writeEEPROM(CCPR1L); // funcion de escribir en la EEPROM
                 
-                    EEADR = 0b00001001;
-                    writeEEPROM(CCPR2L);
+                    EEADR = 0b00001001; //indicar direccion en data memory
+                    writeEEPROM(CCPR2L);// funcion de escribir en la EEPROM
                    
-                    EEADR = 0b00001010;
-                    writeEEPROM(pot);
+                    EEADR = 0b00001010; //indicar direccion en data memory
+                    writeEEPROM(pot); // funcion de escribir en la EEPROM
                    
-                    EEADR = 0b00001011;
-                    writeEEPROM(pot1);
+                    EEADR = 0b00001011; //indicar direccion en data memory
+                    writeEEPROM(pot1); // funcion de escribir en la EEPROM
                     
-                    bandera = 0;}
+                    bandera = 0;} //limpiar bandera
                 
-                if (PORTBbits.RB3 == 0){
-                    bandera = 5;}
-                if (PORTBbits.RB3 == 1 && bandera == 5){
-                    EEADR = 0b00001100;
-                    writeEEPROM(CCPR1L);
+                if (PORTBbits.RB3 == 0){ //revisar bandera
+                    bandera = 5;} //encender bandera 
+                if (PORTBbits.RB3 == 1 && bandera == 5){ //revisar si se apago la bandera
+                    EEADR = 0b00001100; // //indicar direccion en data memory
+                    writeEEPROM(CCPR1L); // funcion escribir en la EEPROM
                 
-                    EEADR = 0b00001101;
-                    writeEEPROM(CCPR2L);
+                    EEADR = 0b00001101; //indicar direccion en data memory
+                    writeEEPROM(CCPR2L); // funcion escribir en la EEPROM
                    
-                    EEADR = 0b00001110;
-                    writeEEPROM(pot);
+                    EEADR = 0b00001110; //indicar direccion en data memory
+                    writeEEPROM(pot); // funcion escribir en la EEPROM
                    
-                    EEADR = 0b00001111;
-                    writeEEPROM(pot1);
+                    EEADR = 0b00001111; //indicar direccion en data memory
+                    writeEEPROM(pot1); // funcion escribir en la EEPROM
                     
-                    bandera = 0;}
+                    bandera = 0;} //limpiar bandera
             }}
         
         if (selector == 1){
-            loop = 1;
-            while (loop == 1){
-                PORTDbits.RD5 = 0;
-                PORTDbits.RD6 = 1;
-                PORTDbits.RD7 = 0;
-            if (PORTBbits.RB6 == 0){
-                bandera = 2;}
-            if (PORTBbits.RB6 == 1 && bandera == 2){
-                EEADR = 0b00000000;
-                CCPR1L = readEEPROM(); 
+            loop = 1; //manterner modo en loop
+            PORTDbits.RD5 = 0; //apagar led
+            PORTDbits.RD6 = 1; //encender led
+            PORTDbits.RD7 = 0; //apagar led
+            while (loop == 1){ 
+            if (PORTBbits.RB6 == 0){ //revisar si se presiono el boton
+                bandera = 2;} //encender bandera
+            if (PORTBbits.RB6 == 1 && bandera == 2){ //revisar si se dejo de presionar
+                EEADR = 0b00000000;  //indicar direccion en data memory
+                CCPR1L = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00000001;
-                CCPR2L = readEEPROM(); 
+                EEADR = 0b00000001; //indicar direccion en data memory
+                CCPR2L = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00000010;
-                pot = readEEPROM(); 
+                EEADR = 0b00000010; //indicar direccion en data memory
+                pot = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00000011;
-                pot1 = readEEPROM();
+                EEADR = 0b00000011; //indicar direccion en data memory
+                pot1 = readEEPROM(); // funcion de leer en la EEPROM
                 
-                bandera = 0;}
+                bandera = 0;} //limpiar bandera
                 
-            if (PORTBbits.RB5 == 0){
-            bandera = 3;}
-            if (PORTBbits.RB5 == 1 && bandera == 3){
-                EEADR = 0b00000100;
-                CCPR1L = readEEPROM(); 
+            if (PORTBbits.RB5 == 0){ //revisar si se presiono el boton
+            bandera = 3;} //encender bandera
+            if (PORTBbits.RB5 == 1 && bandera == 3){ //revisar si se dejo de presionar
+                EEADR = 0b00000100; //indicar direccion en data memory
+                CCPR1L = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00000101;
-                CCPR2L = readEEPROM(); 
+                EEADR = 0b00000101; //indicar direccion en data memory
+                CCPR2L = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00000110;
-                pot = readEEPROM(); 
+                EEADR = 0b00000110; //indicar direccion en data memory
+                pot = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00000111;
-                pot1 = readEEPROM();
+                EEADR = 0b00000111; //indicar direccion en data memory
+                pot1 = readEEPROM(); // funcion de leer en la EEPROM
                 
-                bandera = 0;}
+                bandera = 0;} //limpiar bandera
                 
-            if (PORTBbits.RB4 == 0){
-            bandera = 4;}
-            if (PORTBbits.RB4 == 1 && bandera == 4){
-                EEADR = 0b00001000;
-                CCPR1L = readEEPROM(); 
+            if (PORTBbits.RB4 == 0){ //revisar si se presiono el boton
+            bandera = 4;} //encender bandera
+            if (PORTBbits.RB4 == 1 && bandera == 4){ //revisar si se dejo de presionar
+                EEADR = 0b00001000; //indicar direccion en data memory
+                CCPR1L = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00001001;
-                CCPR2L = readEEPROM();
+                EEADR = 0b00001001; //indicar direccion en data memory
+                CCPR2L = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00001010;
-                pot = readEEPROM();
+                EEADR = 0b00001010; //indicar direccion en data memory
+                pot = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00001011;
-                pot1 = readEEPROM(); 
+                EEADR = 0b00001011; //indicar direccion en data memory
+                pot1 = readEEPROM();  // funcion de leer en la EEPROM
                 
-                bandera = 0;}
+                bandera = 0;} //limpiar bandera
                 
-            if (PORTBbits.RB3 == 0){
-            bandera = 5;}
-            if (PORTBbits.RB3 == 1 && bandera == 5){
-                EEADR = 0b00001100;
-                CCPR1L = readEEPROM(); 
+            if (PORTBbits.RB3 == 0){ //revisar si se presiono el boton
+            bandera = 5;} //encender bandera
+            if (PORTBbits.RB3 == 1 && bandera == 5){ //revisar si se dejo de presionar
+                EEADR = 0b00001100; //indicar direccion en data memory
+                CCPR1L = readEEPROM();  // funcion de leer en la EEPROM
                 
-                EEADR = 0b00001101;
-                CCPR2L = readEEPROM();
+                EEADR = 0b00001101; //indicar direccion en data memory
+                CCPR2L = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00001110;
-                pot = readEEPROM();
+                EEADR = 0b00001110; //indicar direccion en data memory
+                pot = readEEPROM(); // funcion de leer en la EEPROM
                 
-                EEADR = 0b00001111;
-                pot1 = readEEPROM(); 
+                EEADR = 0b00001111; //indicar direccion en data memory
+                pot1 = readEEPROM();  // funcion de leer en la EEPROM
                 
-                bandera = 0;}
+                bandera = 0;} //limpiar bandera
             
             }}
         
         if (selector == 2){
             loop = 1;
+            PORTDbits.RD5 = 0; //apagar led   
+            PORTDbits.RD6 = 0; //apagar led
+            PORTDbits.RD7 = 1; //encender led
             while (loop == 1){
-            PORTDbits.RD5 = 0;    
-            PORTDbits.RD6 = 0;
-            PORTDbits.RD7 = 1;
             }} 
     }   
 }
@@ -483,47 +443,45 @@ void setup(void){
     TRISBbits.TRISB3 = 1; //puerto B3 como entrada
     TRISCbits.TRISC0 = 0; //puerto C0 como salida
     TRISCbits.TRISC3 = 0; //puerto C3 como salida
-    TRISE = 0;
     TRISD = 0; // Puerto D como salida
     PORTA = 0; // limpiar puerto A
     PORTB = 0; // Limpiar puerto B
     PORTD = 0; // Limpiar puerto D
-    PORTE = 0; 
     
     INTCONbits.GIE = 1; //Activar interrupciones globales
     INTCONbits.PEIE = 1; //Activar interrupciones periféricas
-    INTCONbits.RBIE = 1;
-    INTCONbits.RBIF = 0;
+    INTCONbits.RBIE = 1; //Activar interrupciones del puerto B
+    INTCONbits.RBIF = 0; //Limpiar bandera de interrupcion del puerto B
     INTCONbits.T0IE = 1; //Activar interrupciones del timer0
     INTCONbits.T0IF = 0; //Limpiar bandera de interrupcion del Timer0
     PIE1bits.ADIE = 1; // Habiliar interrupcion del conversor ADC
     PIR1bits.ADIF = 0; // Limpiar bandera de interrupción del ADC
-    PIE1bits.RCIE =  1;
-    PIR1bits.RCIF =  0;
+    PIE1bits.RCIE =  1; //Encender interrupciones del RECEPTOR UART
+    PIR1bits.RCIF =  0; //Limpiar bandera del receptor UART
 
     OSCCONbits.IRCF2 = 0; //Oscilador a 500kHz
     OSCCONbits.IRCF1 = 1;
     OSCCONbits.IRCF0 = 1;
     OSCCONbits.SCS = 1; //Oscialdor interno
     
-    OPTION_REGbits.nRBPU = 0;
+    OPTION_REGbits.nRBPU = 0; //Activar Pull-ups
     OPTION_REGbits.T0CS = 0; //Usar Timer0 con Fosc/4
     OPTION_REGbits.PSA = 0; //Prescaler con el Timer0
     OPTION_REGbits.PS2 = 1; //Prescaler de 256
     OPTION_REGbits.PS1 = 1;
     OPTION_REGbits.PS0 = 1;
     
-    WPUBbits.WPUB7 = 1;
-    WPUBbits.WPUB6 = 1;
-    WPUBbits.WPUB5 = 1;
-    WPUBbits.WPUB4 = 1;
-    WPUBbits.WPUB3 = 1;
+    WPUBbits.WPUB7 = 1; //Pull-up para RB7
+    WPUBbits.WPUB6 = 1; //Pull-up para RB6
+    WPUBbits.WPUB5 = 1; //Pull-up para RB5
+    WPUBbits.WPUB4 = 1; //Pull-up para RB4
+    WPUBbits.WPUB3 = 1; //Pull-up para RB3
     
-    IOCBbits.IOCB7 = 1;
-    IOCBbits.IOCB6 = 0;
-    IOCBbits.IOCB5 = 0;
-    IOCBbits.IOCB4 = 0;
-    IOCBbits.IOCB3 = 0;  
+    IOCBbits.IOCB7 = 1; //Interrupcion para RB7
+    IOCBbits.IOCB6 = 0; //Desactivar interrupcion RB6
+    IOCBbits.IOCB5 = 0; //Desactivar interrupcion RB5
+    IOCBbits.IOCB4 = 0; //Desactivar interrupcion RB4
+    IOCBbits.IOCB3 = 0; //Desactivar interrupcion RB3  
     
     EEADRH = 0;
 }
@@ -538,7 +496,7 @@ void setupADC(void){
     
     ADCON1bits.ADFM = 0;  // Justificado hacia izquierda
     
-    ADCON0bits.CHS3 = 0; // Canal AN12
+    ADCON0bits.CHS3 = 0; // Canal AN0
     ADCON0bits.CHS2 = 0;
     ADCON0bits.CHS1 = 0;
     ADCON0bits.CHS0 = 0;        
@@ -595,40 +553,29 @@ void setupUART(void){
 }
 
 unsigned char readEEPROM(void){
-    while(WR||RD);
-    EECON1bits.EEPGD = 0;
-    EECON1bits.RD = 1;
-    dato = EEDATA;
-    return dato;
+    while(WR||RD); //REVISAR banderas
+    EECON1bits.EEPGD = 0; //Acceder data memory
+    EECON1bits.RD = 1; //iniciar lectura
+    dato = EEDATA; //pasar EEDATA a variable
+    return dato; //retornar dato
 }
 
 void writeEEPROM(unsigned char data){
     
-    while (WR);
-    EEDATA = data;
-    EECON1bits.EEPGD = 0;
-    EECON1bits.WREN = 1;
+    while (WR); //revisar que no haya escritura
+    EEDAT = data; //asignar valor a escribir
+    EECON1bits.EEPGD = 0; //acceder a data memory
+    EECON1bits.WREN = 1; //habiliatar escritura
                 
-    INTCONbits.GIE = 0;
-    while (INTCONbits.GIE == 1);
-    EECON2 = 0x55;
-    EECON2 = 0xAA;
-    EECON1bits.WR = 1;
-    INTCONbits.GIE = 1;
+    INTCONbits.GIE = 0; //Deshabilitar interrupciones
+    while (INTCONbits.GIE == 1); //Revisar
+    EECON2 = 0x55; //Secuencia de escritura
+    EECON2 = 0xAA; 
+    EECON1bits.WR = 1; //escribir
+    INTCONbits.GIE = 1; //habilitar interrupciones
     
-    while (EECON1bits.WR == 1);
-    EECON1bits.WREN = 0;
-}
-
-void interrup(void){
-    INTCONbits.GIE = 1; //Activar interrupciones globales
-    INTCONbits.PEIE = 1; //Activar interrupciones periféricas
-    INTCONbits.RBIE = 1;
-    INTCONbits.RBIF = 0;
-    INTCONbits.T0IE = 1; //Activar interrupciones del timer0
-    INTCONbits.T0IF = 0; //Limpiar bandera de interrupcion del Timer0
-    PIE1bits.ADIE = 1; // Habiliar interrupcion del conversor ADC
-    PIR1bits.ADIF = 0; // Limpiar bandera de interrupción del ADC
+    while (EECON1bits.WR == 1); //mientras se escribe no hacer nada
+    EECON1bits.WREN = 0; //deshabilitar escritura
 }
 
 //FUNCION DE DELAY VARIABLES

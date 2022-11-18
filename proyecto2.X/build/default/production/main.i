@@ -2653,6 +2653,223 @@ extern __bank0 __bit __timeout;
 # 1 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdint.h" 1 3
 # 25 "main.c" 2
 
+# 1 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdio.h" 1 3
+
+
+
+# 1 "E:/Program Files/Microchip/MPLABX/v6.00/packs/Microchip/PIC16Fxxx_DFP/1.3.42/xc8\\pic\\include\\__size_t.h" 1 3
+
+
+
+typedef unsigned size_t;
+# 4 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdio.h" 2 3
+
+# 1 "E:/Program Files/Microchip/MPLABX/v6.00/packs/Microchip/PIC16Fxxx_DFP/1.3.42/xc8\\pic\\include\\__null.h" 1 3
+# 5 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdio.h" 2 3
+
+
+
+
+
+
+# 1 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdarg.h" 1 3
+
+
+
+
+
+
+typedef void * va_list[1];
+
+#pragma intrinsic(__va_start)
+extern void * __va_start(void);
+
+#pragma intrinsic(__va_arg)
+extern void * __va_arg(void *, ...);
+# 11 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdio.h" 2 3
+# 43 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdio.h" 3
+struct __prbuf
+{
+ char * ptr;
+ void (* func)(char);
+};
+# 85 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdio.h" 3
+# 1 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\conio.h" 1 3
+
+
+
+
+
+
+
+# 1 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\errno.h" 1 3
+# 29 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\errno.h" 3
+extern int errno;
+# 8 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\conio.h" 2 3
+
+
+
+
+extern void init_uart(void);
+
+extern char getch(void);
+extern char getche(void);
+extern void putch(char);
+extern void ungetch(char);
+
+extern __bit kbhit(void);
+
+
+
+extern char * cgets(char *);
+extern void cputs(const char *);
+# 85 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdio.h" 2 3
+
+
+
+extern int cprintf(char *, ...);
+#pragma printf_check(cprintf)
+
+
+
+extern int _doprnt(struct __prbuf *, const register char *, register va_list);
+# 180 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdio.h" 3
+#pragma printf_check(vprintf) const
+#pragma printf_check(vsprintf) const
+
+extern char * gets(char *);
+extern int puts(const char *);
+extern int scanf(const char *, ...) __attribute__((unsupported("scanf() is not supported by this compiler")));
+extern int sscanf(const char *, const char *, ...) __attribute__((unsupported("sscanf() is not supported by this compiler")));
+extern int vprintf(const char *, va_list) __attribute__((unsupported("vprintf() is not supported by this compiler")));
+extern int vsprintf(char *, const char *, va_list) __attribute__((unsupported("vsprintf() is not supported by this compiler")));
+extern int vscanf(const char *, va_list ap) __attribute__((unsupported("vscanf() is not supported by this compiler")));
+extern int vsscanf(const char *, const char *, va_list) __attribute__((unsupported("vsscanf() is not supported by this compiler")));
+
+#pragma printf_check(printf) const
+#pragma printf_check(sprintf) const
+extern int sprintf(char *, const char *, ...);
+extern int printf(const char *, ...);
+# 26 "main.c" 2
+
+# 1 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdlib.h" 1 3
+
+
+
+
+
+
+typedef unsigned short wchar_t;
+
+
+
+
+
+
+
+typedef struct {
+ int rem;
+ int quot;
+} div_t;
+typedef struct {
+ unsigned rem;
+ unsigned quot;
+} udiv_t;
+typedef struct {
+ long quot;
+ long rem;
+} ldiv_t;
+typedef struct {
+ unsigned long quot;
+ unsigned long rem;
+} uldiv_t;
+# 65 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdlib.h" 3
+extern double atof(const char *);
+extern double strtod(const char *, const char **);
+extern int atoi(const char *);
+extern unsigned xtoi(const char *);
+extern long atol(const char *);
+
+
+
+extern long strtol(const char *, char **, int);
+
+extern int rand(void);
+extern void srand(unsigned int);
+extern void * calloc(size_t, size_t);
+extern div_t div(int numer, int denom);
+extern udiv_t udiv(unsigned numer, unsigned denom);
+extern ldiv_t ldiv(long numer, long denom);
+extern uldiv_t uldiv(unsigned long numer,unsigned long denom);
+
+
+
+extern unsigned long _lrotl(unsigned long value, unsigned int shift);
+extern unsigned long _lrotr(unsigned long value, unsigned int shift);
+extern unsigned int _rotl(unsigned int value, unsigned int shift);
+extern unsigned int _rotr(unsigned int value, unsigned int shift);
+
+
+
+
+extern void * malloc(size_t);
+extern void free(void *);
+extern void * realloc(void *, size_t);
+# 104 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\stdlib.h" 3
+extern int atexit(void (*)(void));
+extern char * getenv(const char *);
+extern char ** environ;
+extern int system(char *);
+extern void qsort(void *, size_t, size_t, int (*)(const void *, const void *));
+extern void * bsearch(const void *, void *, size_t, size_t, int(*)(const void *, const void *));
+extern int abs(int);
+extern long labs(long);
+
+extern char * itoa(char * buf, int val, int base);
+extern char * utoa(char * buf, unsigned val, int base);
+
+
+
+
+extern char * ltoa(char * buf, long val, int base);
+extern char * ultoa(char * buf, unsigned long val, int base);
+
+extern char * ftoa(float f, int * status);
+# 27 "main.c" 2
+
+# 1 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\string.h" 1 3
+# 14 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\string.h" 3
+extern void * memcpy(void *, const void *, size_t);
+extern void * memmove(void *, const void *, size_t);
+extern void * memset(void *, int, size_t);
+# 36 "E:\\Program Files\\Microchip\\xc8\\v2.40\\pic\\include\\c90\\string.h" 3
+extern char * strcat(char *, const char *);
+extern char * strcpy(char *, const char *);
+extern char * strncat(char *, const char *, size_t);
+extern char * strncpy(char *, const char *, size_t);
+extern char * strdup(const char *);
+extern char * strtok(char *, const char *);
+
+
+extern int memcmp(const void *, const void *, size_t);
+extern int strcmp(const char *, const char *);
+extern int stricmp(const char *, const char *);
+extern int strncmp(const char *, const char *, size_t);
+extern int strnicmp(const char *, const char *, size_t);
+extern void * memchr(const void *, int, size_t);
+extern size_t strcspn(const char *, const char *);
+extern char * strpbrk(const char *, const char *);
+extern size_t strspn(const char *, const char *);
+extern char * strstr(const char *, const char *);
+extern char * stristr(const char *, const char *);
+extern char * strerror(int);
+extern size_t strlen(const char *);
+extern char * strchr(const char *, int);
+extern char * strichr(const char *, int);
+extern char * strrchr(const char *, int);
+extern char * strrichr(const char *, int);
+# 28 "main.c" 2
+
 
 
 
@@ -2661,6 +2878,7 @@ unsigned char x=0;
 unsigned char y=0;
 unsigned char x1=0;
 unsigned char y1=0;
+unsigned char z=0;
 unsigned int selector = 0;
 unsigned int bandera = 0;
 unsigned int loop = 0;
@@ -2676,7 +2894,6 @@ void setupPWM(void);
 void setupUART(void);
 unsigned char readEEPROM(void);
 void writeEEPROM(unsigned char data);
-void interrup(void);
 void cadena(char *cursor);
 void delay(unsigned int micro);
 unsigned int map(uint8_t value, int inputmin, int inputmax, int outmin, int outmax){
@@ -2724,21 +2941,93 @@ void __attribute__((picinterrupt(("")))) isr(void){
         PORTCbits.RC3 = 1;
         delay(pot1);
         PORTCbits.RC3 = 0;
-
     }
 
     if (PIR1bits.RCIF == 1){
-        if (RCREG == '1'){
+        if (RCREG == '3'){
+            CCPR1L = 3;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '4'){
+            CCPR1L = 4;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '5'){
+            CCPR1L = 5;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '6'){
+            CCPR1L = 6;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '7'){
+            CCPR1L = 7;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '8'){
+            CCPR1L = 8;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '9'){
+            CCPR1L = 9;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'A'){
+            CCPR1L = 10;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'B'){
+            CCPR1L = 11;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'C'){
+            CCPR1L = 12;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'D'){
+            CCPR1L = 13;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'E'){
+            CCPR1L = 14;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'F'){
+            CCPR1L = 15;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'G'){
+            CCPR1L = 16;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'H'){
+            CCPR1L = 17;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'J'){
+            CCPR1L = 18;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'K'){
+            CCPR1L = 19;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'L'){
+            CCPR1L = 20;
+            PIR1bits.RCIF = 0;
+        }
+
+        if (RCREG == 'z'){
             selector = 0;
             loop = 0;
             PIR1bits.RCIF = 0;
         }
-        if (RCREG == '2'){
+        if (RCREG == 'x'){
             selector = 1;
             loop = 0;
             PIR1bits.RCIF = 0;
         }
-        if (RCREG == '3'){
+        if (RCREG == 'c'){
             selector = 2;
             loop = 0;
             PIR1bits.RCIF = 0;
@@ -2809,8 +3098,9 @@ void __attribute__((picinterrupt(("")))) isr(void){
             y1--;
             PIR1bits.RCIF = 0;
         }
-    }
-}
+
+
+    }}
 
 
 void main(void) {
@@ -2823,30 +3113,26 @@ void main(void) {
     while (1){
         if (selector == 0){
             loop = 1;
+            PORTDbits.RD5 = 1;
+            PORTDbits.RD6 = 0;
+            PORTDbits.RD7 = 0;
             while (loop == 1){
                 if (ADCON0bits.GO == 0){
                     ADCON0bits.GO = 1;}
-                PORTDbits.RD5 = 1;
-                PORTDbits.RD6 = 0;
-                PORTDbits.RD7 = 0;
                 if (PORTBbits.RB6 == 0){
                     bandera = 2;}
                 if (PORTBbits.RB6 == 1 && bandera == 2){
                     EEADR = 0b00000000;
                     writeEEPROM(CCPR1L);
-                    _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     EEADR = 0b00000001;
                     writeEEPROM(CCPR2L);
-                    _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     EEADR = 0b00000010;
                     writeEEPROM(pot);
-                    _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     EEADR = 0b00000011;
                     writeEEPROM(pot1);
-                    _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     bandera = 0;}
 
@@ -2855,53 +3141,73 @@ void main(void) {
                 if (PORTBbits.RB5 == 1 && bandera == 3){
                     EEADR = 0b00000100;
                     writeEEPROM(CCPR1L);
-                    _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     EEADR = 0b00000101;
                     writeEEPROM(CCPR2L);
-                    _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     EEADR = 0b00000110;
                     writeEEPROM(pot);
-                    _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     EEADR = 0b00000111;
                     writeEEPROM(pot1);
-                    _delay((unsigned long)((40)*(500000/4000000.0)));
 
                     bandera = 0;}
 
+                if (PORTBbits.RB4 == 0){
+                    bandera = 4;}
+                if (PORTBbits.RB4 == 1 && bandera == 4){
+                    EEADR = 0b00001000;
+                    writeEEPROM(CCPR1L);
+
+                    EEADR = 0b00001001;
+                    writeEEPROM(CCPR2L);
+
+                    EEADR = 0b00001010;
+                    writeEEPROM(pot);
+
+                    EEADR = 0b00001011;
+                    writeEEPROM(pot1);
+
+                    bandera = 0;}
+
+                if (PORTBbits.RB3 == 0){
+                    bandera = 5;}
+                if (PORTBbits.RB3 == 1 && bandera == 5){
+                    EEADR = 0b00001100;
+                    writeEEPROM(CCPR1L);
+
+                    EEADR = 0b00001101;
+                    writeEEPROM(CCPR2L);
+
+                    EEADR = 0b00001110;
+                    writeEEPROM(pot);
+
+                    EEADR = 0b00001111;
+                    writeEEPROM(pot1);
+
+                    bandera = 0;}
             }}
 
         if (selector == 1){
-            interrup();
             loop = 1;
+            PORTDbits.RD5 = 0;
+            PORTDbits.RD6 = 1;
+            PORTDbits.RD7 = 0;
             while (loop == 1){
-                PORTDbits.RD5 = 0;
-                PORTDbits.RD6 = 1;
-                PORTDbits.RD7 = 0;
             if (PORTBbits.RB6 == 0){
                 bandera = 2;}
             if (PORTBbits.RB6 == 1 && bandera == 2){
                 EEADR = 0b00000000;
-                readEEPROM();
-                CCPR1L = dato;
-                _delay((unsigned long)((40)*(500000/4000000.0)));
+                CCPR1L = readEEPROM();
 
                 EEADR = 0b00000001;
-                readEEPROM();
-                CCPR2L = dato;
-                _delay((unsigned long)((40)*(500000/4000000.0)));
+                CCPR2L = readEEPROM();
 
                 EEADR = 0b00000010;
-                readEEPROM();
-                pot = dato;
-                _delay((unsigned long)((40)*(500000/4000000.0)));
+                pot = readEEPROM();
 
                 EEADR = 0b00000011;
-                readEEPROM();
-                pot1 = dato;
-                _delay((unsigned long)((40)*(500000/4000000.0)));
+                pot1 = readEEPROM();
 
                 bandera = 0;}
 
@@ -2909,24 +3215,50 @@ void main(void) {
             bandera = 3;}
             if (PORTBbits.RB5 == 1 && bandera == 3){
                 EEADR = 0b00000100;
-                readEEPROM();
-                CCPR1L = dato;
-                _delay((unsigned long)((40)*(500000/4000000.0)));
+                CCPR1L = readEEPROM();
 
                 EEADR = 0b00000101;
-                readEEPROM();
-                CCPR2L = dato;
-                _delay((unsigned long)((40)*(500000/4000000.0)));
+                CCPR2L = readEEPROM();
 
                 EEADR = 0b00000110;
-                readEEPROM();
-                pot = dato;
-                _delay((unsigned long)((40)*(500000/4000000.0)));
+                pot = readEEPROM();
 
                 EEADR = 0b00000111;
-                readEEPROM();
-                pot1 = dato;
-                _delay((unsigned long)((40)*(500000/4000000.0)));
+                pot1 = readEEPROM();
+
+                bandera = 0;}
+
+            if (PORTBbits.RB4 == 0){
+            bandera = 4;}
+            if (PORTBbits.RB4 == 1 && bandera == 4){
+                EEADR = 0b00001000;
+                CCPR1L = readEEPROM();
+
+                EEADR = 0b00001001;
+                CCPR2L = readEEPROM();
+
+                EEADR = 0b00001010;
+                pot = readEEPROM();
+
+                EEADR = 0b00001011;
+                pot1 = readEEPROM();
+
+                bandera = 0;}
+
+            if (PORTBbits.RB3 == 0){
+            bandera = 5;}
+            if (PORTBbits.RB3 == 1 && bandera == 5){
+                EEADR = 0b00001100;
+                CCPR1L = readEEPROM();
+
+                EEADR = 0b00001101;
+                CCPR2L = readEEPROM();
+
+                EEADR = 0b00001110;
+                pot = readEEPROM();
+
+                EEADR = 0b00001111;
+                pot1 = readEEPROM();
 
                 bandera = 0;}
 
@@ -2934,11 +3266,10 @@ void main(void) {
 
         if (selector == 2){
             loop = 1;
-            while (loop == 1){
-            PIE1bits.RCIE = 1;
             PORTDbits.RD5 = 0;
             PORTDbits.RD6 = 0;
             PORTDbits.RD7 = 1;
+            while (loop == 1){
             }}
     }
 }
@@ -2956,12 +3287,10 @@ void setup(void){
     TRISBbits.TRISB3 = 1;
     TRISCbits.TRISC0 = 0;
     TRISCbits.TRISC3 = 0;
-    TRISE = 0;
     TRISD = 0;
     PORTA = 0;
     PORTB = 0;
     PORTD = 0;
-    PORTE = 0;
 
     INTCONbits.GIE = 1;
     INTCONbits.PEIE = 1;
@@ -2971,7 +3300,8 @@ void setup(void){
     INTCONbits.T0IF = 0;
     PIE1bits.ADIE = 1;
     PIR1bits.ADIF = 0;
-    PIE1bits.RCIE = 0;
+    PIE1bits.RCIE = 1;
+    PIR1bits.RCIF = 0;
 
     OSCCONbits.IRCF2 = 0;
     OSCCONbits.IRCF1 = 1;
@@ -3067,6 +3397,7 @@ void setupUART(void){
 }
 
 unsigned char readEEPROM(void){
+    while(WR||RD);
     EECON1bits.EEPGD = 0;
     EECON1bits.RD = 1;
     dato = EEDATA;
@@ -3074,32 +3405,21 @@ unsigned char readEEPROM(void){
 }
 
 void writeEEPROM(unsigned char data){
-    EEDATA = data;
+
+    while (WR);
+    EEDAT = data;
     EECON1bits.EEPGD = 0;
     EECON1bits.WREN = 1;
 
     INTCONbits.GIE = 0;
     while (INTCONbits.GIE == 1);
-    _delay((unsigned long)((50)*(500000/4000000.0)));
     EECON2 = 0x55;
     EECON2 = 0xAA;
     EECON1bits.WR = 1;
-    interrup();
-    _delay((unsigned long)((50)*(500000/4000000.0)));
+    INTCONbits.GIE = 1;
 
     while (EECON1bits.WR == 1);
     EECON1bits.WREN = 0;
-}
-
-void interrup(void){
-    INTCONbits.GIE = 1;
-    INTCONbits.PEIE = 1;
-    INTCONbits.RBIE = 1;
-    INTCONbits.RBIF = 0;
-    INTCONbits.T0IE = 1;
-    INTCONbits.T0IF = 0;
-    PIE1bits.ADIE = 1;
-    PIR1bits.ADIF = 0;
 }
 
 
