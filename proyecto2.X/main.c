@@ -23,29 +23,33 @@
 
 #include <xc.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define _XTAL_FREQ 500000 //frecuencia de 500 kHZ
 #define tmr0_val 246 //valor del timer0 para un período de 20ms
 
-unsigned char x=0;
-unsigned char y=0;
-unsigned char x1=0;
-unsigned char y1=0;
-unsigned int selector = 0;
-unsigned int bandera = 0;
-unsigned int loop = 0;
+unsigned char x=0; //variable para posicion del servo1
+unsigned char y=0; //variable para posicion del servo2
+unsigned char x1=0; //variable para posicion del servo3
+unsigned char y1=0; //variable para posicion del servo4
+unsigned char z=0; //variable para selector del servo
+unsigned int selector = 0; //variable para selector de modo
+unsigned int bandera = 0; //variable para bandera de pushbuttons
+unsigned int loop = 0; //variable para mantener loop
 unsigned int pot; //valor para tiempo en alto de PWM para intensidad del led
 unsigned int pot1; //valor para tiempo en alto de PWM para intensidad del led
-unsigned char dato;
-unsigned char servo[18] = {3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
-unsigned char servo2[17] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+unsigned char dato; //variable para dato a leer de la EEPROM
+unsigned char servo[18] = {3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}; //arreglo para posicionar servos del CCP
+unsigned char servo2[17] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17}; //arreglo para posicionar servos del PWM
 
 void setup(void); //función de configuración
 void setupADC(void); //función de configuración del ADC
 void setupPWM(void); //función de configuración del PWM
 void setupUART(void); //función de UART
-unsigned char readEEPROM(void);
-void writeEEPROM(unsigned char data);
+unsigned char readEEPROM(void); //funcio de leer de la EEPROM
+void writeEEPROM(unsigned char data); //funcion 
 void interrup(void);
 void cadena(char *cursor);
 void delay(unsigned int micro); //función para obtener delay variable
@@ -98,17 +102,128 @@ void __interrupt() isr(void){
     }
     
     if (PIR1bits.RCIF == 1){
-        if (RCREG == '1'){
+        if (RCREG == '3'){
+            CCPR1L = 3;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '4'){
+            CCPR1L = 4;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '5'){
+            CCPR1L = 5;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '6'){
+            CCPR1L = 6;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '7'){
+            CCPR1L = 7;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '8'){
+            CCPR1L = 8;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == '9'){
+            CCPR1L = 9;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'A'){
+            CCPR1L = 10;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'B'){
+            CCPR1L = 11;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'C'){
+            CCPR1L = 12;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'D'){
+            CCPR1L = 13;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'E'){
+            CCPR1L = 14;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'F'){
+            CCPR1L = 15;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'G'){
+            CCPR1L = 16;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        
+        if (RCREG == 'H'){
+            CCPR1L = 17;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        
+        if (RCREG == 'J'){
+            CCPR1L = 18;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'K'){
+            CCPR1L = 19;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        if (RCREG == 'L'){
+            CCPR1L = 20;
+            //CCPR1L = valor;
+            //loop = 0;
+            PIR1bits.RCIF = 0;
+        }
+        
+        if (RCREG == 'z'){
             selector = 0;
             loop = 0;
             PIR1bits.RCIF = 0;
         }
-        if (RCREG == '2'){
+        if (RCREG == 'x'){
             selector = 1;
             loop = 0;
             PIR1bits.RCIF = 0;
         }
-        if (RCREG == '3'){
+        if (RCREG == 'c'){
             selector = 2;
             loop = 0;
             PIR1bits.RCIF = 0;
@@ -178,9 +293,10 @@ void __interrupt() isr(void){
             pot1 = servo2[y1];
             y1--;
             PIR1bits.RCIF = 0;
-        }    
-    }
-}
+        }
+        
+        
+    }}
 
 //LOOP PRINCIPAL
 void main(void) { 
@@ -204,19 +320,15 @@ void main(void) {
                 if (PORTBbits.RB6 == 1 && bandera == 2){
                     EEADR = 0b00000000;
                     writeEEPROM(CCPR1L);
-                    __delay_us(40);
                 
                     EEADR = 0b00000001;
                     writeEEPROM(CCPR2L);
-                    __delay_us(40);
                    
                     EEADR = 0b00000010;
                     writeEEPROM(pot);
-                    __delay_us(40);
                    
                     EEADR = 0b00000011;
                     writeEEPROM(pot1);
-                    __delay_us(40);
                     
                     bandera = 0;}
                 
@@ -225,26 +337,54 @@ void main(void) {
                 if (PORTBbits.RB5 == 1 && bandera == 3){
                     EEADR = 0b00000100;
                     writeEEPROM(CCPR1L);
-                    __delay_us(40);
                 
                     EEADR = 0b00000101;
                     writeEEPROM(CCPR2L);
-                    __delay_us(40);
                    
                     EEADR = 0b00000110;
                     writeEEPROM(pot);
-                    __delay_us(40);
                    
                     EEADR = 0b00000111;
                     writeEEPROM(pot1);
-                    __delay_us(40);
                     
                     bandera = 0;}
-            
+                
+                if (PORTBbits.RB4 == 0){
+                    bandera = 4;}
+                if (PORTBbits.RB4 == 1 && bandera == 4){
+                    EEADR = 0b00001000;
+                    writeEEPROM(CCPR1L);
+                
+                    EEADR = 0b00001001;
+                    writeEEPROM(CCPR2L);
+                   
+                    EEADR = 0b00001010;
+                    writeEEPROM(pot);
+                   
+                    EEADR = 0b00001011;
+                    writeEEPROM(pot1);
+                    
+                    bandera = 0;}
+                
+                if (PORTBbits.RB3 == 0){
+                    bandera = 5;}
+                if (PORTBbits.RB3 == 1 && bandera == 5){
+                    EEADR = 0b00001100;
+                    writeEEPROM(CCPR1L);
+                
+                    EEADR = 0b00001101;
+                    writeEEPROM(CCPR2L);
+                   
+                    EEADR = 0b00001110;
+                    writeEEPROM(pot);
+                   
+                    EEADR = 0b00001111;
+                    writeEEPROM(pot1);
+                    
+                    bandera = 0;}
             }}
         
         if (selector == 1){
-            interrup();
             loop = 1;
             while (loop == 1){
                 PORTDbits.RD5 = 0;
@@ -254,24 +394,16 @@ void main(void) {
                 bandera = 2;}
             if (PORTBbits.RB6 == 1 && bandera == 2){
                 EEADR = 0b00000000;
-                readEEPROM();
-                CCPR1L = dato; 
-                __delay_us(40);
+                CCPR1L = readEEPROM(); 
                 
                 EEADR = 0b00000001;
-                readEEPROM();
-                CCPR2L = dato; 
-                __delay_us(40);
+                CCPR2L = readEEPROM(); 
                 
                 EEADR = 0b00000010;
-                readEEPROM();
-                pot = dato; 
-                __delay_us(40);
+                pot = readEEPROM(); 
                 
                 EEADR = 0b00000011;
-                readEEPROM();
-                pot1 = dato; 
-                __delay_us(40);
+                pot1 = readEEPROM();
                 
                 bandera = 0;}
                 
@@ -279,24 +411,50 @@ void main(void) {
             bandera = 3;}
             if (PORTBbits.RB5 == 1 && bandera == 3){
                 EEADR = 0b00000100;
-                readEEPROM();
-                CCPR1L = dato; 
-                __delay_us(40);
+                CCPR1L = readEEPROM(); 
                 
                 EEADR = 0b00000101;
-                readEEPROM();
-                CCPR2L = dato; 
-                __delay_us(40);
+                CCPR2L = readEEPROM(); 
                 
                 EEADR = 0b00000110;
-                readEEPROM();
-                pot = dato; 
-                __delay_us(40);
+                pot = readEEPROM(); 
                 
                 EEADR = 0b00000111;
-                readEEPROM();
-                pot1 = dato; 
-                __delay_us(40);
+                pot1 = readEEPROM();
+                
+                bandera = 0;}
+                
+            if (PORTBbits.RB4 == 0){
+            bandera = 4;}
+            if (PORTBbits.RB4 == 1 && bandera == 4){
+                EEADR = 0b00001000;
+                CCPR1L = readEEPROM(); 
+                
+                EEADR = 0b00001001;
+                CCPR2L = readEEPROM();
+                
+                EEADR = 0b00001010;
+                pot = readEEPROM();
+                
+                EEADR = 0b00001011;
+                pot1 = readEEPROM(); 
+                
+                bandera = 0;}
+                
+            if (PORTBbits.RB3 == 0){
+            bandera = 5;}
+            if (PORTBbits.RB3 == 1 && bandera == 5){
+                EEADR = 0b00001100;
+                CCPR1L = readEEPROM(); 
+                
+                EEADR = 0b00001101;
+                CCPR2L = readEEPROM();
+                
+                EEADR = 0b00001110;
+                pot = readEEPROM();
+                
+                EEADR = 0b00001111;
+                pot1 = readEEPROM(); 
                 
                 bandera = 0;}
             
@@ -305,7 +463,6 @@ void main(void) {
         if (selector == 2){
             loop = 1;
             while (loop == 1){
-            PIE1bits.RCIE =  1;    
             PORTDbits.RD5 = 0;    
             PORTDbits.RD6 = 0;
             PORTDbits.RD7 = 1;
@@ -341,7 +498,8 @@ void setup(void){
     INTCONbits.T0IF = 0; //Limpiar bandera de interrupcion del Timer0
     PIE1bits.ADIE = 1; // Habiliar interrupcion del conversor ADC
     PIR1bits.ADIF = 0; // Limpiar bandera de interrupción del ADC
-    PIE1bits.RCIE =  0;
+    PIE1bits.RCIE =  1;
+    PIR1bits.RCIF =  0;
 
     OSCCONbits.IRCF2 = 0; //Oscilador a 500kHz
     OSCCONbits.IRCF1 = 1;
@@ -437,6 +595,7 @@ void setupUART(void){
 }
 
 unsigned char readEEPROM(void){
+    while(WR||RD);
     EECON1bits.EEPGD = 0;
     EECON1bits.RD = 1;
     dato = EEDATA;
@@ -444,18 +603,18 @@ unsigned char readEEPROM(void){
 }
 
 void writeEEPROM(unsigned char data){
+    
+    while (WR);
     EEDATA = data;
     EECON1bits.EEPGD = 0;
     EECON1bits.WREN = 1;
                 
     INTCONbits.GIE = 0;
     while (INTCONbits.GIE == 1);
-    __delay_us(50);
     EECON2 = 0x55;
     EECON2 = 0xAA;
     EECON1bits.WR = 1;
-    interrup();
-    __delay_us(50);
+    INTCONbits.GIE = 1;
     
     while (EECON1bits.WR == 1);
     EECON1bits.WREN = 0;
@@ -475,7 +634,7 @@ void interrup(void){
 //FUNCION DE DELAY VARIABLES
 void delay(unsigned int micro){
     while (micro > 0){
-        __delay_us(50); //delay de 0.25ms
+        __delay_us(50); //delay de 
         micro--; //decrementar variable
     }
 }
